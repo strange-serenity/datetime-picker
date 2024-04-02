@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./style.css">
+    <title>Date Picker</title>
+</head>
+<body>
+<div class="wrapper">
+    <nav>
+        <button>На главную</button>
+        <button id="decrement">&lt;</button>
+        <div>
+            <label for="datepicker">Выберите дату:</label>
+            <input type="date" id="datepicker" name="datepicker">
+        </div>
+        <button id="increment">&gt;&gt;|</button>
+    </nav>
+    <iframe id="myFrame" src="stub.html" style="height: 90vh;"></iframe>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("decrement").addEventListener("click", function () {
+            let dt1String = localStorage.getItem("dt1");
+            let dt2String = localStorage.getItem("dt2");
+            let dt1 = new Date(dt1String);
+            let dt2 = new Date(dt2String);
+            dt1.setHours(dt1.getHours() - 24);
+            dt2.setHours(dt2.getHours() - 24);
+            localStorage.setItem("dt1", formatDate(dt1));
+            localStorage.setItem("dt2", formatDate(dt2));
+            updateFrameContent();
+        });
+
+        document.getElementById("increment").addEventListener("click", function () {
+            let dt2 = new Date();
+            let dt1 = new Date();
+            dt1.setHours(dt2.getHours() - 12);
+            dt2.setHours(dt2.getHours() + 1);
+            localStorage.setItem("dt2", formatDate(dt2));
+            localStorage.setItem("dt1", formatDate(dt1));
+            updateFrameContent();
+        });
+
+        document.getElementById("datepicker").addEventListener("change", function () {
+            let selectedDate = new Date(this.value);
+            let frame = document.getElementById("myFrame");
+            let resStr = `Выбран интервал с ${selectedDate.getTime()} по ${Date.now()}`
+            if (selectedDate.getTime() > Date.now) {
+                resStr = `Выбран интервал с ${Date.now()} по ${selectedDate.getTime()}`
+            }
+            frame.contentWindow.document.body.innerHTML = resStr;
+        });
+
+        function formatDate(date) {
+            let year = date.getFullYear();
+            let month = pad2(date.getMonth() + 1);
+            let day = pad2(date.getDate());
+            let hours = pad2(date.getHours());
+            let minutes = pad2(date.getMinutes());
+            let seconds = pad2(date.getSeconds());
+            return year + "/" + month + "/" + day + " " + hours + ":" + minutes + ":" + seconds;
+        }
+
+        function pad2(number) {
+            return (number < 10 ? '0' : '') + number;
+        }
+
+        function updateFrameContent() {
+            let dt1 = localStorage.getItem("dt1");
+            let dt2 = localStorage.getItem("dt2");
+            let frame = document.getElementById("myFrame");
+            if (dt1 && dt2) {
+                frame.contentWindow.document.body.innerHTML = "<p>dt1: " + dt1 + "</p><p>dt2: " + dt2 + "</p>";
+            }
+        }
+    });
+</script>
+</body>
+</html>
