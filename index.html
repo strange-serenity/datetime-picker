@@ -8,71 +8,116 @@
 <body>
 <div class="wrapper">
     <nav>
-        <button>На главную</button>
-        <button id="decrement">&lt;</button>
-        <div>
-            <label for="datepicker">Выберите дату:</label>
-            <input type="date" id="datepicker" name="datepicker">
+        <div class="left_group">
+            <button>На главную</button>
+            <button id="formURL">Сформировать URL</button>
         </div>
-        <button id="increment">&gt;&gt;|</button>
+        <div class="center_group">
+            <label for="timeSelect">Время перехода суток: </label><select id="timeSelect" name="timeSelect">
+            <option value="19" selected>19:00</option>
+            <option value="23">23:00</option>
+        </select>
+            часов
+        </div>
+        <div class="right_group">
+            <button id="decrement">&lt;</button>
+            <div>
+                <label for="datepicker">Выберите дату:</label>
+                <input type="date" id="datepicker" name="datepicker">
+            </div>
+            <button id="increment">&gt;&gt;|</button>
+        </div>
+
     </nav>
-    <iframe id="myFrame" src="stub.html" style="height: 90vh;"></iframe>
+    <iframe id="myFrame" src="stub.html" style="height: 92.9vh;"></iframe>
 </div>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        let currentDate = new Date();
+        let datepicker = document.getElementById("datepicker");
+        datepicker.valueAsDate = currentDate;
+
+
         document.getElementById("decrement").addEventListener("click", function () {
             let dt1String = localStorage.getItem("dt1");
             let dt2String = localStorage.getItem("dt2");
+
             let dt1 = new Date(dt1String);
             let dt2 = new Date(dt2String);
+
             dt1.setHours(dt1.getHours() - 24);
             dt2.setHours(dt2.getHours() - 24);
-            localStorage.setItem("dt1", formatDate(dt1));
-            localStorage.setItem("dt2", formatDate(dt2));
+
+            localStorage.setItem("dt1", dt1.toString());
+            localStorage.setItem("dt2", dt2.toString());
+
             updateFrameContent();
         });
 
         document.getElementById("increment").addEventListener("click", function () {
-            let dt2 = new Date();
-            let dt1 = new Date();
-            dt1.setHours(dt2.getHours() - 12);
+            let dt1String = localStorage.getItem("dt1");
+            let dt2String = localStorage.getItem("dt2");
+
+            let dt1 = new Date(dt1String);
+            let dt2 = new Date(dt2String);
+
+
             dt2.setHours(dt2.getHours() + 1);
-            localStorage.setItem("dt2", formatDate(dt2));
-            localStorage.setItem("dt1", formatDate(dt1));
+            dt1.setHours(dt2.getHours() - 12);
+
+            localStorage.setItem("dt1", dt1.toString());
+            localStorage.setItem("dt2", dt2.toString());
+
             updateFrameContent();
         });
 
         document.getElementById("datepicker").addEventListener("change", function () {
             let selectedDate = new Date(this.value);
-            let frame = document.getElementById("myFrame");
-            let resStr = `Выбран интервал с ${selectedDate.getTime()} по ${Date.now()}`
-            if (selectedDate.getTime() > Date.now) {
-                resStr = `Выбран интервал с ${Date.now()} по ${selectedDate.getTime()}`
+            let selectedHours = document.getElementById("timeSelect").value; // Получаем выбранное значение часов из <select>
+            selectedDate.setHours(selectedHours); // Устанавливаем выбранные часы в объекте Date
+
+            let currentDate = new Date()
+            currentDate.setHours(selectedHours, 0, 0); // Устанавливаем выбранные часы в объекте Date
+
+            let resStr = ''
+            if (selectedDate.getTime() > Date.now()) {
+                resStr = `Выбран интервал с ${currentDate} \n по ${selectedDate}`;
+                localStorage.setItem("dt1", currentDate.toString());
+                localStorage.setItem("dt2", selectedDate.toString());
+            } else if (selectedDate.getTime() < Date.now()) {
+                resStr = `Выбран интервал с ${selectedDate} \n по ${currentDate}`;
+                localStorage.setItem("dt1", selectedDate.toString());
+                localStorage.setItem("dt2", currentDate.toString());
             }
+
+            let frame = document.getElementById("myFrame");
             frame.contentWindow.document.body.innerHTML = resStr;
         });
 
-        function formatDate(date) {
-            let year = date.getFullYear();
-            let month = pad2(date.getMonth() + 1);
-            let day = pad2(date.getDate());
-            let hours = pad2(date.getHours());
-            let minutes = pad2(date.getMinutes());
-            let seconds = pad2(date.getSeconds());
-            return year + "/" + month + "/" + day + " " + hours + ":" + minutes + ":" + seconds;
-        }
+        document.getElementById("timeSelect").addEventListener("change", function () {
+            document.getElementById("datepicker").dispatchEvent(new Event('change'));
+        });
 
-        function pad2(number) {
-            return (number < 10 ? '0' : '') + number;
-        }
+        document.getElementById("formURL").addEventListener("click", function () {
+            let dt1String = localStorage.getItem("dt1");
+            let dt1 = new Date(dt1String);
+            let dt1Unix = dt1.getTime() / 1000;
+
+            let dt2String = localStorage.getItem("dt2");
+            let dt2 = new Date(dt2String);
+            let dt2Unix = dt2.getTime() / 1000;
+
+            let frame = document.getElementById("myFrame");
+            frame.contentWindow.document.body.innerHTML = `stub.html?dt1=${dt1Unix}&dt2=${dt2Unix}`
+        });
+
 
         function updateFrameContent() {
             let dt1 = localStorage.getItem("dt1");
             let dt2 = localStorage.getItem("dt2");
+
             let frame = document.getElementById("myFrame");
-            if (dt1 && dt2) {
-                frame.contentWindow.document.body.innerHTML = "<p>dt1: " + dt1 + "</p><p>dt2: " + dt2 + "</p>";
-            }
+            frame.contentWindow.document.body.innerHTML = `${dt1}, ${dt2}`
         }
     });
 </script>

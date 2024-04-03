@@ -6,6 +6,40 @@
 
 button, input {
     background: #4b4b6e;
+    border-radius: 15px;
+    padding: 5px;
+    border: 1px solid white;
+}
+
+.left_group {
+    display: flex;
+}
+
+
+.center_group {
+    display: flex;
+    align-items: center;
+}
+
+.right_group {
+    display: flex;
+    justify-content: space-between;
+}
+
+select option {
+    color: #000000; /* Цвет текста в выпадающем списке */
+}
+
+.right_group button#decrement {
+    margin-right: 20px; /* Добавляем отступ справа для кнопки уменьшения */
+}
+
+.right_group button#increment {
+    margin-left: 20px; /* Добавляем отступ справа для кнопки уменьшения */
+}
+
+#timeSelect {
+    color: black;
 }
 
 body {
@@ -13,13 +47,14 @@ body {
 }
 
 .wrapper {
-    margin: 25px;
+    margin: 10px;
 }
 
 nav {
     margin-bottom: 10px;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
+    align-items: center;
 }
 
 iframe {
