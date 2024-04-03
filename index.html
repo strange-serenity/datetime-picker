@@ -13,11 +13,12 @@
             <button id="formURL">Сформировать URL</button>
         </div>
         <div class="center_group">
-            <label for="timeSelect">Время перехода суток: </label><select id="timeSelect" name="timeSelect">
+            <label for="timeSelect"><span>Время перехода суток: </span></label><select id="timeSelect"
+                                                                                       name="timeSelect">
             <option value="19" selected>19:00</option>
             <option value="23">23:00</option>
         </select>
-            часов
+            <span>часов</span>
         </div>
         <div class="right_group">
             <button id="decrement">&lt;</button>
@@ -44,8 +45,8 @@
             let dt1 = new Date(dt1String);
             let dt2 = new Date(dt2String);
 
-            dt1.setHours(dt1.getHours() - 24);
-            dt2.setHours(dt2.getHours() - 24);
+            dt1.setDate(dt1.getDate() - 1);
+            dt2.setDate(dt2.getDate() - 1);
 
             localStorage.setItem("dt1", dt1.toString());
             localStorage.setItem("dt2", dt2.toString());
@@ -60,9 +61,9 @@
             let selectedHours = document.getElementById("timeSelect").value;
 
             dt1.setHours(selectedHours, 0, 0);
-            dt1.setDate(dt1.getDate() - 1);
-
             dt2.setHours(selectedHours, 0, 0);
+
+            dt2.setDate(dt1.getDate() + 1);
 
             localStorage.setItem("dt1", dt1.toString());
             localStorage.setItem("dt2", dt2.toString());
@@ -71,21 +72,18 @@
         });
 
         document.getElementById("datepicker").addEventListener("change", function () {
-            let selectedDate = new Date(this.value);
+            let dt1 = new Date(this.value);
+            let dt2 = new Date(this.value);
+
             let selectedHours = document.getElementById("timeSelect").value;
 
-            selectedDate.setHours(selectedHours, 0, 0);
+            dt1.setHours(selectedHours, 0, 0);
+            dt2.setHours(selectedHours, 0, 0);
 
-            let currentDate = new Date()
-            currentDate.setHours(selectedHours, 0, 0);
+            dt2.setDate(dt2.getDate() + 1);
 
-            if (selectedDate.getTime() > Date.now()) {
-                localStorage.setItem("dt1", currentDate.toString());
-                localStorage.setItem("dt2", selectedDate.toString());
-            } else if (selectedDate.getTime() < Date.now()) {
-                localStorage.setItem("dt1", selectedDate.toString());
-                localStorage.setItem("dt2", currentDate.toString());
-            }
+            localStorage.setItem("dt1", dt1.toString());
+            localStorage.setItem("dt2", dt2.toString());
 
             updateFrameContent()
         });
