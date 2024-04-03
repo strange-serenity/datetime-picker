@@ -37,7 +37,6 @@
         let datepicker = document.getElementById("datepicker");
         datepicker.valueAsDate = currentDate;
 
-
         document.getElementById("decrement").addEventListener("click", function () {
             let dt1String = localStorage.getItem("dt1");
             let dt2String = localStorage.getItem("dt2");
@@ -55,15 +54,15 @@
         });
 
         document.getElementById("increment").addEventListener("click", function () {
-            let dt1String = localStorage.getItem("dt1");
-            let dt2String = localStorage.getItem("dt2");
+            let dt1 = new Date();
+            let dt2 = new Date();
 
-            let dt1 = new Date(dt1String);
-            let dt2 = new Date(dt2String);
+            let selectedHours = document.getElementById("timeSelect").value;
 
+            dt1.setHours(selectedHours, 0, 0);
+            dt1.setDate(dt1.getDate() - 1);
 
-            dt2.setHours(dt2.getHours() + 1);
-            dt1.setHours(dt2.getHours() - 12);
+            dt2.setHours(selectedHours, 0, 0);
 
             localStorage.setItem("dt1", dt1.toString());
             localStorage.setItem("dt2", dt2.toString());
@@ -73,29 +72,40 @@
 
         document.getElementById("datepicker").addEventListener("change", function () {
             let selectedDate = new Date(this.value);
-            let selectedHours = document.getElementById("timeSelect").value; // Получаем выбранное значение часов из <select>
-            selectedDate.setHours(selectedHours); // Устанавливаем выбранные часы в объекте Date
+            let selectedHours = document.getElementById("timeSelect").value;
+
+            selectedDate.setHours(selectedHours, 0, 0);
 
             let currentDate = new Date()
-            currentDate.setHours(selectedHours, 0, 0); // Устанавливаем выбранные часы в объекте Date
+            currentDate.setHours(selectedHours, 0, 0);
 
-            let resStr = ''
             if (selectedDate.getTime() > Date.now()) {
-                resStr = `Выбран интервал с ${currentDate} \n по ${selectedDate}`;
                 localStorage.setItem("dt1", currentDate.toString());
                 localStorage.setItem("dt2", selectedDate.toString());
             } else if (selectedDate.getTime() < Date.now()) {
-                resStr = `Выбран интервал с ${selectedDate} \n по ${currentDate}`;
                 localStorage.setItem("dt1", selectedDate.toString());
                 localStorage.setItem("dt2", currentDate.toString());
             }
 
-            let frame = document.getElementById("myFrame");
-            frame.contentWindow.document.body.innerHTML = resStr;
+            updateFrameContent()
         });
 
         document.getElementById("timeSelect").addEventListener("change", function () {
-            document.getElementById("datepicker").dispatchEvent(new Event('change'));
+            let dt1String = localStorage.getItem("dt1");
+            let dt2String = localStorage.getItem("dt2");
+
+            let dt1 = new Date(dt1String);
+            let dt2 = new Date(dt2String);
+
+            let selectedHours = document.getElementById("timeSelect").value;
+
+            dt1.setHours(selectedHours, 0, 0);
+            dt2.setHours(selectedHours, 0, 0);
+
+            localStorage.setItem("dt1", dt1.toString());
+            localStorage.setItem("dt2", dt2.toString());
+
+            updateFrameContent()
         });
 
         document.getElementById("formURL").addEventListener("click", function () {
