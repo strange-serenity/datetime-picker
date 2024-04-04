@@ -15,14 +15,6 @@ button, input {
     display: flex;
 }
 
-.center_group label {
-    margin-right: 10px;
-}
-
-.center_group span {
-    margin-left: 10px;
-}
-
 .center_group {
     display: flex;
     align-items: center;
@@ -30,7 +22,13 @@ button, input {
 
 .right_group {
     display: flex;
-    justify-content: space-between;
+    align-items: center;
+}
+
+.right_group_datepicker {
+    margin-left: 10px;
+    display: flex;
+    width: 214px;
 }
 
 select option {
@@ -47,6 +45,7 @@ select option {
 
 #timeSelect {
     color: black;
+    margin: 0 10px;
 }
 
 body {
@@ -67,4 +66,55 @@ nav {
 iframe {
     width: 100%;
     background: white;
+}
+
+/* Добавляем стили для наведения на кнопки и инпуты */
+button:hover,
+input:hover {
+    background: #5b5b7e; /* Изменяем цвет фона при наведении */
+}
+
+button:active,
+input:active {
+    background: #3b3b4e; /* Изменяем цвет фона при нажатии */
+    border-color: #ffffff; /* Изменяем цвет границы при нажатии */
+}
+
+
+/* Медиа-запрос для экранов с шириной до 600px */
+@media only screen and (max-width: 800px) {
+    nav {
+        flex-direction: column; /* Изменяем направление элементов на вертикальное */
+        align-items: stretch; /* Растягиваем элементы на всю ширину контейнера */
+    }
+
+    .left_group,
+    .right_group {
+        flex-direction: column; /* Изменяем направление элементов на вертикальное */
+        align-items: center; /* Выравниваем элементы по центру */
+    }
+
+    .right_group {
+        margin-top: 10px; /* Добавляем отступ сверху для правой группы */
+    }
+
+    button,
+    input {
+        width: 100%; /* Растягиваем кнопки и инпуты на всю доступную ширину */
+    }
+
+    /* Добавляем отступ между элементами */
+    .right_group > div {
+        margin-right: 10px;
+    }
+}
+
+/* Добавляем стили для наведения на выпадающий список */
+#timeSelect:hover {
+    background: #e2e0ff; /* Изменяем цвет фона при наведении */
+    border-color: #ffffff; /* Изменяем цвет границы при наведении */
+}
+
+#statusBar {
+    min-width: 175px; /* Задаем минимальную ширину в пикселях или других подходящих единицах измерения */
 }
