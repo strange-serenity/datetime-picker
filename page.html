@@ -29,7 +29,7 @@
             <span id="statusBar">Ничего не выбрано</span>
             <div class="right_group_datepicker">
                 <button id="decrement">&lt;</button>
-                <div id="datepiccker_group">
+                <div id="datepicker_group">
                     <label for="datepicker">Выберите дату:</label>
                     <input type="date" id="datepicker" name="datepicker">
                 </div>
@@ -40,6 +40,7 @@
     </nav>
     <iframe id="myFrame" style="height: 92.9vh;"></iframe>
 </div>
+<script src="moment.js"></script>
 <script>
     const linksArray = [
         //Состояние агломашин по данным из OPC
@@ -90,6 +91,16 @@
 
             dt1.setDate(dt1.getDate() - 1);
             dt2.setDate(dt2.getDate() - 1);
+
+            const dt1Unix = Date.parse(moment(dt1).utc());
+            const dt2Unix = Date.parse(moment(dt2).utc());
+
+            const dt1fromUnix = moment(dt1Unix).format("YYYY-MM-DD HH:mm:ss")
+            const dt2fromUnix = moment(dt2Unix).format("YYYY-MM-DD HH:mm:ss")
+
+            // alert(dt1Unix + " " + dt1fromUnix + "," + dt2Unix + " " + dt2fromUnix)
+
+            document.getElementById("myFrame").src = `${linksArray[linkNumber]}?from=${dt1Unix}&to=${dt2Unix}`
 
             localStorage.setItem("dt1", dt1.toString());
             localStorage.setItem("dt2", dt2.toString());
