@@ -2,170 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="./style.css">
-    <title>Date Picker</title>
+    <title>Title</title>
 </head>
 <body>
-<div class="wrapper">
-    <nav>
-        <div class="left_group">
-            <button>На главную</button>
-            <button id="formURL">Сформировать URL</button>
-        </div>
-        <div class="center_group">
-            <div>
-                <label for="timeSelect">
-                    <span>Время перехода суток:</span>
-                </label>
-                <select id="timeSelect" name="timeSelect">
-                    <option value="19" selected>19:00</option>
-                    <option value="23">23:00</option>
+<h1>Ссылки на графики</h1>
+<ul>
+    <li>
+        <a href="page.html?linkNumber=1" target="_blank">Состояние агломашин по данным из OPC</a><br/></li>
+    <li>
+        <a href="page.html?linkNumber=2" target="_blank">Состояние агломашин по данным из PLC</a><br/></li>
+    <li>
+        <a href="page.html?linkNumber=3" target="_blank">Детализация по АМ1</a><br/></li>
+    <li>
+        <a href="page.html?linkNumber=4" target="_blank">Детализация по АМ2</a><br/></li>
+    <li>
+        <a href="page.html?linkNumber=5" target="_blank">Детализация по АМ3</a><br/></li>
+    <li>
+        <a href="page.html?linkNumber=6" target="_blank">Детализация по АМ4</a><br/></li>
+    <li>
+        <a href="page.html?linkNumber=7" target="_blank">Детализация по АМ5</a><br/></li>
+    <li>
+        <a href="page.html?linkNumber=8" target="_blank">Детализация по АМ6</a><br/></li>
+    <li>
+        <a href="page.html?linkNumber=9" target="_blank">Показания пылемеров В1-6</a><br/></li>
+    <li>
+        <a href="page.html?linkNumber=10" target="_blank">Параметры экомониторинга АЦ-2 (local)</a><br/></li>
+</ul>
 
-                </select>
-                <span>часов</span>
-            </div>
-        </div>
-        <div class="right_group">
-            <span id="statusBar">Ничего не выбрано</span>
-            <div class="right_group_datepicker">
-                <button id="decrement">&lt;</button>
-                <div id="datepicker_group">
-                    <label for="datepicker">Выберите дату:</label>
-                    <input type="date" id="datepicker" name="datepicker">
-                </div>
-                <button id="increment">&gt;&gt;|</button>
-            </div>
-        </div>
-
-    </nav>
-    <iframe id="myFrame" src="http://192.168.3.238:3000/public-dashboards/47459996603e43d9ab5b294ba148ea65?orgId=1"
-            style="height: 92.9vh;"></iframe>
-</div>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let currentDate = new Date();
-        let datepicker = document.getElementById("datepicker");
-        datepicker.valueAsDate = currentDate;
-
-        document.getElementById("decrement").addEventListener("click", function () {
-            let dt1String = localStorage.getItem("dt1");
-            let dt2String = localStorage.getItem("dt2");
-
-            let dt1 = new Date(dt1String);
-            let dt2 = new Date(dt2String);
-
-            dt1.setDate(dt1.getDate() - 1);
-            dt2.setDate(dt2.getDate() - 1);
-
-            localStorage.setItem("dt1", dt1.toString());
-            localStorage.setItem("dt2", dt2.toString());
-
-            updateFrameContent();
-        });
-
-        document.getElementById("increment").addEventListener("click", function () {
-            let dt1 = new Date();
-            let dt2 = new Date();
-
-            let selectedHours = document.getElementById("timeSelect").value;
-
-            dt1.setHours(selectedHours, 0, 0);
-            dt2.setHours(selectedHours, 0, 0);
-
-            dt2.setDate(dt1.getDate() + 1);
-
-            localStorage.setItem("dt1", dt1.toString());
-            localStorage.setItem("dt2", dt2.toString());
-
-            updateFrameContent();
-        });
-
-        document.getElementById("datepicker").addEventListener("change", function () {
-            let dt1 = new Date(this.value);
-            let dt2 = new Date(this.value);
-
-            let selectedHours = document.getElementById("timeSelect").value;
-
-            dt1.setHours(selectedHours, 0, 0);
-            dt2.setHours(selectedHours, 0, 0);
-
-            dt2.setDate(dt2.getDate() + 1);
-
-            localStorage.setItem("dt1", dt1.toString());
-            localStorage.setItem("dt2", dt2.toString());
-
-            updateFrameContent()
-        });
-
-        document.getElementById("timeSelect").addEventListener("change", function () {
-            let dt1String = localStorage.getItem("dt1");
-            let dt2String = localStorage.getItem("dt2");
-
-            let dt1 = new Date(dt1String);
-            let dt2 = new Date(dt2String);
-
-            let selectedHours = document.getElementById("timeSelect").value;
-
-            dt1.setHours(selectedHours, 0, 0);
-            dt2.setHours(selectedHours, 0, 0);
-
-            localStorage.setItem("dt1", dt1.toString());
-            localStorage.setItem("dt2", dt2.toString());
-
-            updateFrameContent()
-        });
-
-        document.getElementById("formURL").addEventListener("click", function () {
-            let dt1String = localStorage.getItem("dt1");
-            let dt1 = new Date(dt1String);
-            let dt1Unix = dt1.getTime() / 1000;
-
-            let dt2String = localStorage.getItem("dt2");
-            let dt2 = new Date(dt2String);
-            let dt2Unix = dt2.getTime() / 1000;
-
-            let frame = document.getElementById("myFrame");
-            frame.contentWindow.document.body.innerHTML = `stub.html?dt1=${dt1Unix}&dt2=${dt2Unix}`
-        });
-
-        function formatDate(date) {
-            // Получаем название месяца
-            const monthNames = [
-                "января", "февраля", "марта",
-                "апреля", "мая", "июня", "июля",
-                "августа", "сентября", "октября",
-                "ноября", "декабря"
-            ];
-
-            let day = date.getDate();
-            let monthIndex = date.getMonth();
-            let year = date.getFullYear();
-            let hours = date.getHours();
-            let minutes = date.getMinutes();
-
-            // Добавляем нули перед однозначными числами
-            day = ("0" + day).slice(-2);
-            hours = ("0" + hours).slice(-2);
-            minutes = ("0" + minutes).slice(-2);
-
-            return `${day} ${monthNames[monthIndex]} ${year} г. ${hours}:${minutes}`;
-        }
-
-        function updateFrameContent() {
-            let dt1String = localStorage.getItem("dt1");
-            let dt2String = localStorage.getItem("dt2");
-
-            let dt1 = new Date(dt1String);
-            let dt2 = new Date(dt2String);
-
-            // Форматируем даты и времена
-            let formattedDt1 = formatDate(dt1);
-            let formattedDt2 = formatDate(dt2);
-
-            let status = document.getElementById("statusBar");
-            status.innerText = `С ${formattedDt1} по ${formattedDt2}`;
-        }
-    });
-</script>
 </body>
 </html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./style.css">
+    <title>Date Picker</title>
+</head>
+<body>
+<div class="wrapper">
+    <nav>
+        <div class="left_group">
+            <button>На главную</button>
+            <button id="formURL">Сформировать URL</button>
+        </div>
+        <div class="center_group">
+            <div>
+                <label for="timeSelect">
+                    <span>Время перехода суток:</span>
+                </label>
+                <select id="timeSelect" name="timeSelect">
+                    <option value="19" selected>19:00</option>
+                    <option value="23">23:00</option>
+
+                </select>
+                <span>часов</span>
+            </div>
+        </div>
+        <div class="right_group">
+            <span id="statusBar">Ничего не выбрано</span>
+            <div class="right_group_datepicker">
+                <button id="decrement">&lt;</button>
+                <div id="datepiccker_group">
+                    <label for="datepicker">Выберите дату:</label>
+                    <input type="date" id="datepicker" name="datepicker">
+                </div>
+                <button id="increment">&gt;&gt;|</button>
+            </div>
+        </div>
+
+    </nav>
+    <iframe id="myFrame" style="height: 92.9vh;"></iframe>
+</div>
+<script>
+    const linksArray = [
+        //Состояние агломашин по данным из OPC
+        "http://192.168.3.238:3000/public-dashboards/053e451ce5e74e109eee4bdc9960f6b7",
+        //Состояние агломашин по данным из PLC
+        "http://192.168.3.238:3000/public-dashboards/9e88eefef381426883a5d42382adb978",
+        //Детализация по АМ1
+        "http://192.168.3.238:3000/public-dashboards/e3ce59eae4584c32bd5f5190fd240443",
+        //Детализация по АМ2
+        "http://192.168.3.238:3000/public-dashboards/860cee4cdbab4961b6f1762e6f87fccb",
+        //Детализация по АМ3
+        "http://192.168.3.238:3000/public-dashboards/b9be8af5c38f41eabd083b4d0ff30af8",
+        //Детализация по АМ4
+        "http://192.168.3.238:3000/public-dashboards/f6a667e856cb49d38bc9dd473c2c193c",
+        //Детализация по АМ5
+        "http://192.168.3.238:3000/public-dashboards/c5701963a3b747dca62deca12297ef0e",
+        //Детализация по АМ6
+        "http://192.168.3.238:3000/public-dashboards/5872c3e264b743b6bdb10f32f2396533",
+        //Показания пылемеров В1-6
+        "http://192.168.3.238:3000/public-dashboards/47459996603e43d9ab5b294ba148ea65",
+        //Параметры экомониторинга АЦ-2 (local)
+        "http://192.168.3.238:3000/public-dashboards/f786c67c0ee04f91aaef6895f9b52a4c"
+    ]
+
+    const queryString = window.location.search;
+    const searchParams = new URLSearchParams(queryString);
+    const linkNumber = searchParams.get("linkNumber");
+
+    // Установка адреса iframe на основе linkNumber
+    if (linkNumber && linkNumber >= 1 && linkNumber <= linksArray.length) {
+        const iframeSrc = linksArray[linkNumber - 1];
+        const myFrame = document.getElementById("myFrame");
+        myFrame.src = iframeSrc;
+    }
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let currentDate = new Date();
+        let datepicker = document.getElementById("datepicker");
+        datepicker.valueAsDate = currentDate;
+
+        document.getElementById("decrement").addEventListener("click", function () {
+            let dt1String = localStorage.getItem("dt1");
+            let dt2String = localStorage.getItem("dt2");
+
+            let dt1 = new Date(dt1String);
+            let dt2 = new Date(dt2String);
+
+            dt1.setDate(dt1.getDate() - 1);
+            dt2.setDate(dt2.getDate() - 1);
+
+            localStorage.setItem("dt1", dt1.toString());
+            localStorage.setItem("dt2", dt2.toString());
+
+            updateFrameContent();
+        });
+
+        document.getElementById("increment").addEventListener("click", function () {
+            let dt1 = new Date();
+            let dt2 = new Date();
+
+            let selectedHours = document.getElementById("timeSelect").value;
+
+            dt1.setHours(selectedHours, 0, 0);
+            dt2.setHours(selectedHours, 0, 0);
+
+            dt2.setDate(dt1.getDate() + 1);
+
+            localStorage.setItem("dt1", dt1.toString());
+            localStorage.setItem("dt2", dt2.toString());
+
+            updateFrameContent();
+        });
+
+        document.getElementById("datepicker").addEventListener("change", function () {
+            let dt1 = new Date(this.value);
+            let dt2 = new Date(this.value);
+
+            let selectedHours = document.getElementById("timeSelect").value;
+
+            dt1.setHours(selectedHours, 0, 0);
+            dt2.setHours(selectedHours, 0, 0);
+
+            dt2.setDate(dt2.getDate() + 1);
+
+            localStorage.setItem("dt1", dt1.toString());
+            localStorage.setItem("dt2", dt2.toString());
+
+            updateFrameContent()
+        });
+
+        document.getElementById("timeSelect").addEventListener("change", function () {
+            let dt1String = localStorage.getItem("dt1");
+            let dt2String = localStorage.getItem("dt2");
+
+            let dt1 = new Date(dt1String);
+            let dt2 = new Date(dt2String);
+
+            let selectedHours = document.getElementById("timeSelect").value;
+
+            dt1.setHours(selectedHours, 0, 0);
+            dt2.setHours(selectedHours, 0, 0);
+
+            localStorage.setItem("dt1", dt1.toString());
+            localStorage.setItem("dt2", dt2.toString());
+
+            updateFrameContent()
+        });
+
+        document.getElementById("formURL").addEventListener("click", function () {
+            let dt1String = localStorage.getItem("dt1");
+            let dt1 = new Date(dt1String);
+            let dt1Unix = dt1.getTime() / 1000;
+
+            let dt2String = localStorage.getItem("dt2");
+            let dt2 = new Date(dt2String);
+            let dt2Unix = dt2.getTime() / 1000;
+
+            let frame = document.getElementById("myFrame");
+            frame.contentWindow.document.body.innerHTML = `stub.html?dt1=${dt1Unix}&dt2=${dt2Unix}`
+        });
+
+        function formatDate(date) {
+            // Получаем название месяца
+            const monthNames = [
+                "января", "февраля", "марта",
+                "апреля", "мая", "июня", "июля",
+                "августа", "сентября", "октября",
+                "ноября", "декабря"
+            ];
+
+            let day = date.getDate();
+            let monthIndex = date.getMonth();
+            let year = date.getFullYear();
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+
+            // Добавляем нули перед однозначными числами
+            day = ("0" + day).slice(-2);
+            hours = ("0" + hours).slice(-2);
+            minutes = ("0" + minutes).slice(-2);
+
+            return `${day} ${monthNames[monthIndex]} ${year} г. ${hours}:${minutes}`;
+        }
+
+        function updateFrameContent() {
+            let dt1String = localStorage.getItem("dt1");
+            let dt2String = localStorage.getItem("dt2");
+
+            let dt1 = new Date(dt1String);
+            let dt2 = new Date(dt2String);
+
+            // Форматируем даты и времена
+            let formattedDt1 = formatDate(dt1);
+            let formattedDt2 = formatDate(dt2);
+
+            let status = document.getElementById("statusBar");
+            status.innerText = `С ${formattedDt1} по ${formattedDt2}`;
+        }
+    });
+</script>
+</body>
+</html>
