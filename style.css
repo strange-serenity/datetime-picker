@@ -4,6 +4,10 @@
     color: #ffffff;
 }
 
+a {
+    text-decoration: none;
+}
+
 button, input {
     background: #4b4b6e;
     border-radius: 8px;

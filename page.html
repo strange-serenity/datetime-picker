@@ -32,7 +32,7 @@
                     <label for="datepicker"></label>
                     <input type="date" id="datepicker" name="datepicker">
                 </div>
-                <button id="increment">&lt;</button>
+                <button id="increment">&gt;</button>
                 <button id="fullRight">&gt;&gt;|</button>
             </div>
         </div>
@@ -70,17 +70,32 @@
         "http://192.168.3.238:3000/public-dashboards/5872c3e264b743b6bdb10f32f2396533",
         //Показания пылемеров В1-6
         "http://192.168.3.238:3000/public-dashboards/47459996603e43d9ab5b294ba148ea65",
-        //Параметры экомониторинга АЦ-2 (local)
-        "http://192.168.3.238:3000/public-dashboards/f786c67c0ee04f91aaef6895f9b52a4c"
+        //Параметры экомониторинга АМ1 (АЦ2)
+        "http://192.168.3.238:3000/public-dashboards/5a12da2c1ff942659c3086efe9dc55bc?orgId=1",
+        //Параметры экомониторинга АМ2 (АЦ2)
+        "http://192.168.3.238:3000/public-dashboards/80f2ba325dc8401b847d7cce79abea2a?orgId=1",
+        //Параметры экомониторинга АМ3 (АЦ2)
+        "http://192.168.3.238:3000/public-dashboards/ede6a62035034770ac3292b7e0121fd2?orgId=1",
+        //Параметры экомониторинга АМ4 (АЦ2)
+        "http://192.168.3.238:3000/public-dashboards/da7c43c6c6984fa28f3c7549fb794392?orgId=1",
+        //Параметры экомониторинга АМ5 (АЦ2)
+        "http://192.168.3.238:3000/public-dashboards/4b0eba42b76844bcb2f1c94366150d9e?orgId=1",
+        //Параметры экомониторинга АМ6 (АЦ2)
+        "http://192.168.3.238:3000/public-dashboards/fb5e650faf924d4d8475d875f9a692a4?orgId=1"
     ]
 
     const queryString = window.location.search;
     const searchParams = new URLSearchParams(queryString);
     const linkNumber = searchParams.get("linkNumber");
 
+    let isStartedURL = false
+
     // Установка адреса iframe на основе linkNumber
     if (linkNumber && linkNumber >= 1 && linkNumber <= linksArray.length) {
         const iframeSrc = linksArray[linkNumber - 1];
+        if (iframeSrc.includes("?")) {
+            isStartedURL = true
+        }
         const myFrame = document.getElementById("myFrame");
         myFrame.src = iframeSrc;
     }
@@ -104,7 +119,8 @@
             const dt1Unix = convertToUTCinUnix(dt1)
             const dt2Unix = convertToUTCinUnix(dt2)
 
-            document.getElementById("myFrame").src = `${linksArray[linkNumber]}?from=${dt1Unix}&to=${dt2Unix}`
+
+            document.getElementById("myFrame").src = `${linksArray[linkNumber - 1]}${isStartedURL ? "&" : "?"}from=${dt1Unix}&to=${dt2Unix}`
 
             localStorage.setItem("dt1", dt1.toString());
             localStorage.setItem("dt2", dt2.toString());
@@ -125,7 +141,7 @@
             const dt1Unix = convertToUTCinUnix(dt1)
             const dt2Unix = convertToUTCinUnix(dt2)
 
-            document.getElementById("myFrame").src = `${linksArray[linkNumber]}?from=${dt1Unix}&to=${dt2Unix}`
+            document.getElementById("myFrame").src = `${linksArray[linkNumber - 1]}${isStartedURL ? "&" : "?"}from=${dt1Unix}&to=${dt2Unix}`
 
             localStorage.setItem("dt1", dt1.toString());
             localStorage.setItem("dt2", dt2.toString());
@@ -147,7 +163,7 @@
             const dt1Unix = convertToUTCinUnix(dt1)
             const dt2Unix = convertToUTCinUnix(dt2)
 
-            document.getElementById("myFrame").src = `${linksArray[linkNumber]}?from=${dt1Unix}&to=${dt2Unix}`
+            document.getElementById("myFrame").src = `${linksArray[linkNumber - 1]}${isStartedURL ? "&" : "?"}from=${dt1Unix}&to=${dt2Unix}`
 
             localStorage.setItem("dt1", dt1.toString());
             localStorage.setItem("dt2", dt2.toString());
@@ -169,7 +185,7 @@
             const dt1Unix = convertToUTCinUnix(dt1)
             const dt2Unix = convertToUTCinUnix(dt2)
 
-            document.getElementById("myFrame").src = `${linksArray[linkNumber]}?from=${dt1Unix}&to=${dt2Unix}`
+            document.getElementById("myFrame").src = `${linksArray[linkNumber - 1]}${isStartedURL ? "&" : "?"}from=${dt1Unix}&to=${dt2Unix}`
 
             localStorage.setItem("dt1", dt1.toString());
             localStorage.setItem("dt2", dt2.toString());
@@ -192,7 +208,7 @@
             const dt1Unix = convertToUTCinUnix(dt1)
             const dt2Unix = convertToUTCinUnix(dt2)
 
-            document.getElementById("myFrame").src = `${linksArray[linkNumber]}?from=${dt1Unix}&to=${dt2Unix}`
+            document.getElementById("myFrame").src = `${linksArray[linkNumber - 1]}${isStartedURL ? "&" : "?"}from=${dt1Unix}&to=${dt2Unix}`
 
             localStorage.setItem("dt1", dt1.toString());
             localStorage.setItem("dt2", dt2.toString());
