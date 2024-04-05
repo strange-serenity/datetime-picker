@@ -98,6 +98,59 @@
         }
         const myFrame = document.getElementById("myFrame");
         myFrame.src = iframeSrc;
+    } else if (!linkNumber) {
+        const myFrame = document.getElementById("myFrame");
+        myFrame.src = "http://192.168.3.238:3000/public-dashboards/053e451ce5e74e109eee4bdc9960f6b7";
+    }
+
+    function formatDate(date) {
+        // Получаем название месяца
+        const monthNames = [
+            "января", "февраля", "марта",
+            "апреля", "мая", "июня", "июля",
+            "августа", "сентября", "октября",
+            "ноября", "декабря"
+        ];
+
+        let day = date.getDate();
+        let monthIndex = date.getMonth();
+        let year = date.getFullYear();
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+
+        // Добавляем нули перед однозначными числами
+        day = ("0" + day).slice(-2);
+        hours = ("0" + hours).slice(-2);
+        minutes = ("0" + minutes).slice(-2);
+
+        return `${day} ${monthNames[monthIndex]} ${year} г. ${hours}:${minutes}`;
+    }
+
+    function simpleLoading(dt1, dt2) {
+        const dt1Unix = convertToUTCinUnix(dt1)
+        const dt2Unix = convertToUTCinUnix(dt2)
+
+        document.getElementById("myFrame").src = `${linksArray[linkNumber - 1]}${isStartedURL ? "&" : "?"}from=${dt1Unix}&to=${dt2Unix}`
+
+        localStorage.setItem("dt1", dt1.toString());
+        localStorage.setItem("dt2", dt2.toString());
+
+        updateFrameContent();
+    }
+
+    function updateFrameContent() {
+        let dt1String = localStorage.getItem("dt1");
+        let dt2String = localStorage.getItem("dt2");
+
+        let dt1 = new Date(dt1String);
+        let dt2 = new Date(dt2String);
+
+        // Форматируем даты и времена
+        let formattedDt1 = formatDate(dt1);
+        let formattedDt2 = formatDate(dt2);
+
+        let status = document.getElementById("statusBar");
+        status.innerText = `С ${formattedDt1} по ${formattedDt2}`;
     }
 
 
@@ -116,16 +169,7 @@
             dt1.setDate(dt1.getDate() - 1);
             dt2.setDate(dt2.getDate() - 1);
 
-            const dt1Unix = convertToUTCinUnix(dt1)
-            const dt2Unix = convertToUTCinUnix(dt2)
-
-
-            document.getElementById("myFrame").src = `${linksArray[linkNumber - 1]}${isStartedURL ? "&" : "?"}from=${dt1Unix}&to=${dt2Unix}`
-
-            localStorage.setItem("dt1", dt1.toString());
-            localStorage.setItem("dt2", dt2.toString());
-
-            updateFrameContent();
+            simpleLoading(dt1, dt2)
         });
 
         document.getElementById("increment").addEventListener("click", function () {
@@ -138,15 +182,7 @@
             dt1.setDate(dt1.getDate() + 1);
             dt2.setDate(dt2.getDate() + 1);
 
-            const dt1Unix = convertToUTCinUnix(dt1)
-            const dt2Unix = convertToUTCinUnix(dt2)
-
-            document.getElementById("myFrame").src = `${linksArray[linkNumber - 1]}${isStartedURL ? "&" : "?"}from=${dt1Unix}&to=${dt2Unix}`
-
-            localStorage.setItem("dt1", dt1.toString());
-            localStorage.setItem("dt2", dt2.toString());
-
-            updateFrameContent();
+            simpleLoading(dt1, dt2)
         });
 
         document.getElementById("fullRight").addEventListener("click", function () {
@@ -160,15 +196,7 @@
 
             dt1.setDate(dt1.getDate() - 1);
 
-            const dt1Unix = convertToUTCinUnix(dt1)
-            const dt2Unix = convertToUTCinUnix(dt2)
-
-            document.getElementById("myFrame").src = `${linksArray[linkNumber - 1]}${isStartedURL ? "&" : "?"}from=${dt1Unix}&to=${dt2Unix}`
-
-            localStorage.setItem("dt1", dt1.toString());
-            localStorage.setItem("dt2", dt2.toString());
-
-            updateFrameContent();
+            simpleLoading(dt1, dt2)
         });
 
         document.getElementById("datepicker").addEventListener("change", function () {
@@ -182,15 +210,7 @@
 
             dt2.setDate(dt2.getDate() + 1);
 
-            const dt1Unix = convertToUTCinUnix(dt1)
-            const dt2Unix = convertToUTCinUnix(dt2)
-
-            document.getElementById("myFrame").src = `${linksArray[linkNumber - 1]}${isStartedURL ? "&" : "?"}from=${dt1Unix}&to=${dt2Unix}`
-
-            localStorage.setItem("dt1", dt1.toString());
-            localStorage.setItem("dt2", dt2.toString());
-
-            updateFrameContent()
+            simpleLoading(dt1, dt2)
         });
 
         document.getElementById("timeSelect").addEventListener("change", function () {
@@ -205,54 +225,8 @@
             dt1.setHours(selectedHours, 0, 0);
             dt2.setHours(selectedHours, 0, 0);
 
-            const dt1Unix = convertToUTCinUnix(dt1)
-            const dt2Unix = convertToUTCinUnix(dt2)
-
-            document.getElementById("myFrame").src = `${linksArray[linkNumber - 1]}${isStartedURL ? "&" : "?"}from=${dt1Unix}&to=${dt2Unix}`
-
-            localStorage.setItem("dt1", dt1.toString());
-            localStorage.setItem("dt2", dt2.toString());
-
-            updateFrameContent()
+            simpleLoading(dt1, dt2)
         });
-
-        function formatDate(date) {
-            // Получаем название месяца
-            const monthNames = [
-                "января", "февраля", "марта",
-                "апреля", "мая", "июня", "июля",
-                "августа", "сентября", "октября",
-                "ноября", "декабря"
-            ];
-
-            let day = date.getDate();
-            let monthIndex = date.getMonth();
-            let year = date.getFullYear();
-            let hours = date.getHours();
-            let minutes = date.getMinutes();
-
-            // Добавляем нули перед однозначными числами
-            day = ("0" + day).slice(-2);
-            hours = ("0" + hours).slice(-2);
-            minutes = ("0" + minutes).slice(-2);
-
-            return `${day} ${monthNames[monthIndex]} ${year} г. ${hours}:${minutes}`;
-        }
-
-        function updateFrameContent() {
-            let dt1String = localStorage.getItem("dt1");
-            let dt2String = localStorage.getItem("dt2");
-
-            let dt1 = new Date(dt1String);
-            let dt2 = new Date(dt2String);
-
-            // Форматируем даты и времена
-            let formattedDt1 = formatDate(dt1);
-            let formattedDt2 = formatDate(dt2);
-
-            let status = document.getElementById("statusBar");
-            status.innerText = `С ${formattedDt1} по ${formattedDt2}`;
-        }
     });
 </script>
 </body>
