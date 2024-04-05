@@ -9,8 +9,7 @@
 <div class="wrapper">
     <nav>
         <div class="left_group">
-            <button>На главную</button>
-            <button id="formURL">Сформировать URL</button>
+            <button><a href="index.html">На главную</a></button>
         </div>
         <div class="center_group">
             <div>
@@ -30,10 +29,11 @@
             <div class="right_group_datepicker">
                 <button id="decrement">&lt;</button>
                 <div id="datepicker_group">
-                    <label for="datepicker">Выберите дату:</label>
+                    <label for="datepicker"></label>
                     <input type="date" id="datepicker" name="datepicker">
                 </div>
-                <button id="increment">&gt;&gt;|</button>
+                <button id="increment">&lt;</button>
+                <button id="fullRight">&gt;&gt;|</button>
             </div>
         </div>
 
@@ -42,6 +42,15 @@
 </div>
 <script src="moment.js"></script>
 <script>
+    function convertToUTCinUnix(dt) {
+        const dtUTC = new Date(dt.toISOString())
+
+        let selectedHours = parseInt(document.getElementById("timeSelect").value);
+        dtUTC.setHours(selectedHours + 2)
+
+        return dtUTC.getTime();
+    }
+
     const linksArray = [
         //Состояние агломашин по данным из OPC
         "http://192.168.3.238:3000/public-dashboards/053e451ce5e74e109eee4bdc9960f6b7",
@@ -92,13 +101,8 @@
             dt1.setDate(dt1.getDate() - 1);
             dt2.setDate(dt2.getDate() - 1);
 
-            const dt1Unix = Date.parse(moment(dt1).utc());
-            const dt2Unix = Date.parse(moment(dt2).utc());
-
-            const dt1fromUnix = moment(dt1Unix).format("YYYY-MM-DD HH:mm:ss")
-            const dt2fromUnix = moment(dt2Unix).format("YYYY-MM-DD HH:mm:ss")
-
-            // alert(dt1Unix + " " + dt1fromUnix + "," + dt2Unix + " " + dt2fromUnix)
+            const dt1Unix = convertToUTCinUnix(dt1)
+            const dt2Unix = convertToUTCinUnix(dt2)
 
             document.getElementById("myFrame").src = `${linksArray[linkNumber]}?from=${dt1Unix}&to=${dt2Unix}`
 
@@ -109,6 +113,27 @@
         });
 
         document.getElementById("increment").addEventListener("click", function () {
+            let dt1String = localStorage.getItem("dt1");
+            let dt2String = localStorage.getItem("dt2");
+
+            let dt1 = new Date(dt1String);
+            let dt2 = new Date(dt2String);
+
+            dt1.setDate(dt1.getDate() + 1);
+            dt2.setDate(dt2.getDate() + 1);
+
+            const dt1Unix = convertToUTCinUnix(dt1)
+            const dt2Unix = convertToUTCinUnix(dt2)
+
+            document.getElementById("myFrame").src = `${linksArray[linkNumber]}?from=${dt1Unix}&to=${dt2Unix}`
+
+            localStorage.setItem("dt1", dt1.toString());
+            localStorage.setItem("dt2", dt2.toString());
+
+            updateFrameContent();
+        });
+
+        document.getElementById("fullRight").addEventListener("click", function () {
             let dt1 = new Date();
             let dt2 = new Date();
 
@@ -117,7 +142,12 @@
             dt1.setHours(selectedHours, 0, 0);
             dt2.setHours(selectedHours, 0, 0);
 
-            dt2.setDate(dt1.getDate() + 1);
+            dt1.setDate(dt1.getDate() - 1);
+
+            const dt1Unix = convertToUTCinUnix(dt1)
+            const dt2Unix = convertToUTCinUnix(dt2)
+
+            document.getElementById("myFrame").src = `${linksArray[linkNumber]}?from=${dt1Unix}&to=${dt2Unix}`
 
             localStorage.setItem("dt1", dt1.toString());
             localStorage.setItem("dt2", dt2.toString());
@@ -135,6 +165,11 @@
             dt2.setHours(selectedHours, 0, 0);
 
             dt2.setDate(dt2.getDate() + 1);
+
+            const dt1Unix = convertToUTCinUnix(dt1)
+            const dt2Unix = convertToUTCinUnix(dt2)
+
+            document.getElementById("myFrame").src = `${linksArray[linkNumber]}?from=${dt1Unix}&to=${dt2Unix}`
 
             localStorage.setItem("dt1", dt1.toString());
             localStorage.setItem("dt2", dt2.toString());
@@ -154,23 +189,15 @@
             dt1.setHours(selectedHours, 0, 0);
             dt2.setHours(selectedHours, 0, 0);
 
+            const dt1Unix = convertToUTCinUnix(dt1)
+            const dt2Unix = convertToUTCinUnix(dt2)
+
+            document.getElementById("myFrame").src = `${linksArray[linkNumber]}?from=${dt1Unix}&to=${dt2Unix}`
+
             localStorage.setItem("dt1", dt1.toString());
             localStorage.setItem("dt2", dt2.toString());
 
             updateFrameContent()
-        });
-
-        document.getElementById("formURL").addEventListener("click", function () {
-            let dt1String = localStorage.getItem("dt1");
-            let dt1 = new Date(dt1String);
-            let dt1Unix = dt1.getTime() / 1000;
-
-            let dt2String = localStorage.getItem("dt2");
-            let dt2 = new Date(dt2String);
-            let dt2Unix = dt2.getTime() / 1000;
-
-            let frame = document.getElementById("myFrame");
-            frame.contentWindow.document.body.innerHTML = `stub.html?dt1=${dt1Unix}&dt2=${dt2Unix}`
         });
 
         function formatDate(date) {
