@@ -128,4 +128,12 @@ input:active {
 
 #statusBar {
     min-width: 175px; /* Задаем минимальную ширину в пикселях или других подходящих единицах измерения */
+    min-height: 29px;
+    border-radius: 8px;
+    padding: 5px;
+    border: 2px solid #440075;
+    color: black;
+    background: white;
+    text-align: center;
+
 }
