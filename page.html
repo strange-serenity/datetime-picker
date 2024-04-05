@@ -71,18 +71,6 @@
         myFrame.src = "http://192.168.3.238:3000/public-dashboards/053e451ce5e74e109eee4bdc9960f6b7";
     }
 
-    function simpleLoading(dt1, dt2) {
-        const dt1Unix = convertToUTCinUnix(dt1)
-        const dt2Unix = convertToUTCinUnix(dt2)
-
-        document.getElementById("myFrame").src = `${linkList[linkNumber - 1]}${isStartedURL ? "&" : "?"}from=${dt1Unix}&to=${dt2Unix}`
-
-        localStorage.setItem("dt1", dt1.toString());
-        localStorage.setItem("dt2", dt2.toString());
-
-        updateFrameContent();
-    }
-
     function updateFrameContent() {
         let dt1String = localStorage.getItem("dt1");
         let dt2String = localStorage.getItem("dt2");
@@ -123,7 +111,15 @@
             dt1.setDate(dt1.getDate() - 1);
             dt2.setDate(dt2.getDate() - 1);
 
-            simpleLoading(dt1, dt2)
+            const dt1Unix = convertToUTCinUnix(dt1)
+            const dt2Unix = convertToUTCinUnix(dt2)
+
+            document.getElementById("myFrame").src = `${linkList[linkNumber - 1]}${isStartedURL ? "&" : "?"}from=${dt1Unix}&to=${dt2Unix}`
+
+            localStorage.setItem("dt1", dt1.toString());
+            localStorage.setItem("dt2", dt2.toString());
+
+            updateFrameContent();
         });
 
         document.getElementById("increment").addEventListener("click", function () {
@@ -136,21 +132,39 @@
             dt1.setDate(dt1.getDate() + 1);
             dt2.setDate(dt2.getDate() + 1);
 
-            simpleLoading(dt1, dt2)
+            const dt1Unix = convertToUTCinUnix(dt1)
+            const dt2Unix = convertToUTCinUnix(dt2)
+
+            document.getElementById("myFrame").src = `${linkList[linkNumber - 1]}${isStartedURL ? "&" : "?"}from=${dt1Unix}&to=${dt2Unix}`
+
+            localStorage.setItem("dt1", dt1.toString());
+            localStorage.setItem("dt2", dt2.toString());
+
+            updateFrameContent();
         });
 
         document.getElementById("fullRight").addEventListener("click", function () {
             let dt1 = new Date();
             let dt2 = new Date();
 
-            let selectedHours = document.getElementById("timeSelect").value;
+            dt2.setHours(dt2.getHours() + 1, 0, 0); // Увеличиваем время на 1 час
+            dt1.setHours(dt2.getHours() - 12, 0, 0); // Устанавливаем время на 12 часов назад
 
-            dt1.setHours(selectedHours, 0, 0);
-            dt2.setHours(selectedHours, 0, 0);
+            const dt1UTC = new Date(dt1.toISOString())
+            const dt2UTC = new Date(dt2.toISOString())
 
-            dt1.setDate(dt1.getDate() - 1);
+            dt1UTC.setHours(dt1UTC.getHours() + 2)
+            dt2UTC.setHours(dt2UTC.getHours() + 2)
 
-            simpleLoading(dt1, dt2)
+            const dt1Unix = dt1UTC.getTime();
+            const dt2Unix = dt2UTC.getTime();
+
+            document.getElementById("myFrame").src = `${linkList[linkNumber - 1]}${isStartedURL ? "&" : "?"}from=${dt1Unix}&to=${dt2Unix}`
+
+            localStorage.setItem("dt1", dt1.toString());
+            localStorage.setItem("dt2", dt2.toString());
+
+            updateFrameContent();
         });
 
         document.getElementById("datepicker").addEventListener("change", function () {
@@ -164,7 +178,15 @@
 
             dt2.setDate(dt2.getDate() + 1);
 
-            simpleLoading(dt1, dt2)
+            const dt1Unix = convertToUTCinUnix(dt1)
+            const dt2Unix = convertToUTCinUnix(dt2)
+
+            document.getElementById("myFrame").src = `${linkList[linkNumber - 1]}${isStartedURL ? "&" : "?"}from=${dt1Unix}&to=${dt2Unix}`
+
+            localStorage.setItem("dt1", dt1.toString());
+            localStorage.setItem("dt2", dt2.toString());
+
+            updateFrameContent();
         });
 
         document.getElementById("timeSelect").addEventListener("change", function () {
@@ -179,7 +201,15 @@
             dt1.setHours(selectedHours, 0, 0);
             dt2.setHours(selectedHours, 0, 0);
 
-            simpleLoading(dt1, dt2)
+            const dt1Unix = convertToUTCinUnix(dt1)
+            const dt2Unix = convertToUTCinUnix(dt2)
+
+            document.getElementById("myFrame").src = `${linkList[linkNumber - 1]}${isStartedURL ? "&" : "?"}from=${dt1Unix}&to=${dt2Unix}`
+
+            localStorage.setItem("dt1", dt1.toString());
+            localStorage.setItem("dt2", dt2.toString());
+
+            updateFrameContent();
         });
     });
 </script>
