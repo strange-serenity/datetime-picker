@@ -15,36 +15,43 @@ button, input {
     border: 1px solid white;
 }
 
-.left_group {
+button {
+    width: 30px;
+}
+
+#left_group {
     display: flex;
 }
 
-.center_group {
+#center_group {
     display: flex;
     align-items: center;
 }
 
-.right_group {
+#right_group {
     display: flex;
     align-items: center;
 }
 
-.right_group_datepicker {
+#right_group_datepicker {
     margin-left: 10px;
     display: flex;
-    width: 214px;
 }
 
 select option {
     color: #000000; /* Цвет текста в выпадающем списке */
 }
 
-.right_group button#decrement {
-    margin-right: 20px; /* Добавляем отступ справа для кнопки уменьшения */
+#right_group button#decrement {
+    margin-right: 20px;
 }
 
-.right_group button#fullRight {
-    margin-left: 20px; /* Добавляем отступ справа для кнопки уменьшения */
+#right_group button#increment {
+    margin-left: 20px;
+}
+
+#right_group button#fullRight {
+    margin-left: 20px;
 }
 
 #timeSelect {
@@ -56,7 +63,7 @@ body {
     background: #34344d;
 }
 
-.wrapper {
+#wrapper {
     margin: 10px;
 }
 

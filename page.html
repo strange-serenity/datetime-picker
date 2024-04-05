@@ -6,9 +6,9 @@
     <title>Date Picker</title>
 </head>
 <body>
-<div class="wrapper">
+<div id="wrapper">
     <nav>
-        <div class="left_group">
+        <div id="left_group">
             <button><a href="index.html">На главную</a></button>
         </div>
         <div class="center_group">
@@ -19,14 +19,13 @@
                 <select id="timeSelect" name="timeSelect">
                     <option value="19" selected>19:00</option>
                     <option value="23">23:00</option>
-
                 </select>
                 <span>часов</span>
             </div>
         </div>
-        <div class="right_group">
+        <div id="right_group">
             <span id="statusBar">Ничего не выбрано</span>
-            <div class="right_group_datepicker">
+            <div id="right_group_datepicker">
                 <button id="decrement">&lt;</button>
                 <div id="datepicker_group">
                     <label for="datepicker"></label>
@@ -101,6 +100,15 @@
 
 
     document.addEventListener("DOMContentLoaded", function () {
+        const queryString = window.location.search;
+        const searchParams = new URLSearchParams(queryString);
+        const insideParam = searchParams.get("inside");
+
+        if (insideParam && insideParam === "true") {
+            let menu = document.getElementById("left_group");
+            menu.style.display = "none";
+        }
+
         let currentDate = new Date();
         let datepicker = document.getElementById("datepicker");
         datepicker.valueAsDate = currentDate;
