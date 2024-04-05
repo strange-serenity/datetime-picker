@@ -45,10 +45,7 @@
 <script>
     function convertToUTCinUnix(dt) {
         const dtUTC = new Date(dt.toISOString())
-
-        let selectedHours = parseInt(document.getElementById("timeSelect").value);
-        dtUTC.setHours(selectedHours + 2)
-
+        dtUTC.setHours(dtUTC.getHours() + 2)
         return dtUTC.getTime();
     }
 
@@ -111,8 +108,13 @@
             dt1.setDate(dt1.getDate() - 1);
             dt2.setDate(dt2.getDate() - 1);
 
-            const dt1Unix = convertToUTCinUnix(dt1)
-            const dt2Unix = convertToUTCinUnix(dt2)
+            let selectedHours = parseInt(document.getElementById("timeSelect").value);
+
+            dt1.setHours(selectedHours)
+            dt2.setHours(selectedHours)
+
+            let dt1Unix = convertToUTCinUnix(dt1)
+            let dt2Unix = convertToUTCinUnix(dt2)
 
             document.getElementById("myFrame").src = `${linkList[linkNumber - 1]}${isStartedURL ? "&" : "?"}from=${dt1Unix}&to=${dt2Unix}`
 
@@ -131,6 +133,11 @@
 
             dt1.setDate(dt1.getDate() + 1);
             dt2.setDate(dt2.getDate() + 1);
+
+            let selectedHours = parseInt(document.getElementById("timeSelect").value);
+
+            dt1.setHours(selectedHours)
+            dt2.setHours(selectedHours)
 
             const dt1Unix = convertToUTCinUnix(dt1)
             const dt2Unix = convertToUTCinUnix(dt2)
