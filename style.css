@@ -15,7 +15,7 @@ button, input {
     border: 1px solid white;
 }
 
-button {
+#increment, #decrement, #fullRight {
     width: 30px;
 }
 
